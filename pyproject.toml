@@ -23,3 +23,6 @@ dev = [
     "types-requests>=2.32.0.20240914",
     "types-flask>=1.1.6",
 ]
+
+[tool.pdm.scripts]
+start = "waitress-serve --port 19198 --threads 4 src.pyikuaimiddle:app"
