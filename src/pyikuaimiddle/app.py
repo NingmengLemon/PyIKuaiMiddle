@@ -7,8 +7,8 @@ import warnings
 
 from flask import Flask, Request, abort, jsonify, request
 
-from lemonyikuai import IKuaiSession, IKuaiClient
-from custom_decorators import Scheduler, cache, compress
+from .lemonyikuai import IKuaiSession, IKuaiClient
+from .decorators import Scheduler, cache, compress
 
 DEFAULT_CONFIG_FILE = "./imw_config.json"
 # config content
@@ -148,6 +148,3 @@ def get_proto_distrib():
 
 
 relogin_scheduler.start()
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    app.run(port=19198, debug=True, threaded=True)

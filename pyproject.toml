@@ -1,0 +1,25 @@
+[project]
+name = "PyIKuaiMiddle"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "NingmengLemon", email = "guanchenxiang@outlook.com"},
+]
+dependencies = [
+    "flask>=3.0.3",
+    "requests>=2.32.3",
+    "waitress>=3.0.0",
+]
+requires-python = "==3.12.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "types-requests>=2.32.0.20240914",
+    "types-flask>=1.1.6",
+]
