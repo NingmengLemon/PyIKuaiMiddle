@@ -20,6 +20,7 @@ DEFAULT_CONFIG_FILE = "./imw_config.json"
 #     "relogin_interval": ...
 # }
 
+logger = logging.getLogger(__name__)
 
 class UnsafeWarning(Warning):
     pass
@@ -62,7 +63,7 @@ def trycatch_template(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
             abort(500)
 
     return wrapped

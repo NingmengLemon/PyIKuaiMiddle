@@ -5,11 +5,13 @@ from urllib import parse
 from typing import Any, Literal, Optional, TypeAlias
 import json
 import functools
-import logging
 
+import logging
 import requests
 
 from ..rwlock import ReadWriteLock
+
+logger = logging.getLogger(__name__)
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
@@ -56,7 +58,7 @@ def check_result(func):
         code = result["Result"]
         msg = result["ErrMsg"]
         if code % 10000 != 0:
-            logging.error("code %s: %s", code, msg)
+            logger.error("code %s: %s", code, msg)
             raise APIError(f"code {code}: {msg}")
 
         return result.get("Data")

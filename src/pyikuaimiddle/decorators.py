@@ -1,5 +1,5 @@
 import functools
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 import threading
 import time
 
@@ -45,19 +45,36 @@ def cache(expire: float | int = 60):
 
 
 class CacheWrapper:
-    def __init__(self, func, expire: float | int = 60) -> None:
+    def __init__(self, func, expire: float | int = 10) -> None:
         self._func = func
         self._expire = expire
-        self._last_call: int | float = 0
-        self._cache: Optional[Any] = None
+        self._cache: dict = {}
+        self._last_call: dict = {}
         self._lock = threading.Lock()
 
+    def _cleanup(self):
+        current_time = time.time()
+        for key in list(self._cache.keys()):
+            if current_time - self._last_call[key] >= self._expire:
+                del self._cache[key]
+                del self._last_call[key]
+
     def __call__(self, *args, **kwargs):
+        if self._expire <= 0:
+            return self._func(*args, **kwargs)
+
+        key = (args, frozenset(kwargs.items()))
         with self._lock:
-            if self._cache is None or time.time() - self._last_call >= self._expire:
-                self._cache = self._func(*args, **kwargs)
-                self._last_call = time.time()
-        return self._cache
+            self._cleanup()
+            current_time = time.time()
+            if (
+                key not in self._cache
+                or current_time - self._last_call.get(key, 0) >= self._expire
+            ):
+                self._cache[key] = self._func(*args, **kwargs)
+                self._last_call[key] = current_time
+
+        return self._cache[key]
 
 
 def schedule(interval: float | int):
@@ -74,7 +91,8 @@ class Scheduler:
         self._thread = threading.Thread(target=func, daemon=True)
 
     def start(self):
-        return self._thread.start()
+        if self._interval > 0:
+            return self._thread.start()
 
     def _schedule_worker(self):
         while True:
