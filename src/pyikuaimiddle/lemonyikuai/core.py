@@ -1,5 +1,6 @@
 import hashlib
 import base64
+import time
 from urllib import parse
 from typing import Any, Literal, Optional, TypeAlias
 import json
@@ -138,16 +139,16 @@ class IKuaiClient:
         types = ["verinfo", "cpu", "memory", "stream", "cputemp"]
         return self.session.call("sysstat", "show", {"TYPE": ",".join(types)})
 
-    def check_wans(self):
+    def check_wans(self, poll_interval: float | int = 1):
         """检查公网出口状态"""
         types = ["internet"]
         payload = {"TYPE": ",".join(types)}
-        yield self.session.call("iksyscheck", "start", payload)
+        self.session.call("iksyscheck", "start", payload)
         while not (result := self.session.call("iksyscheck", "show", payload))[
             "internet_res"
         ]:
-            yield result
-        yield result
+            time.sleep(poll_interval)
+        return result
 
     def get_conn_stat(self, datetype: DateTypeLiteral = "hour", average=True):
         """获取连接统计信息"""

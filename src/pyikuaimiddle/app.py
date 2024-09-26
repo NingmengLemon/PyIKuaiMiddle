@@ -2,7 +2,6 @@ import functools
 import json
 import logging
 from typing import Any
-import time
 import warnings
 
 from flask import Flask, Request, abort, jsonify, request
@@ -115,10 +114,7 @@ def get_sys_info():
 
 @api_template("/check_wans", methods=["GET"])
 def check_wans():
-    result = {}
-    for result in ikclient.check_wans():
-        time.sleep(1)
-    return result
+    return ikclient.check_wans()
 
 
 @api_template("/get_conn_stat", methods=["GET"])
