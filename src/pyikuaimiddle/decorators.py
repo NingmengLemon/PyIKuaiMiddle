@@ -1,16 +1,19 @@
 import functools
-from typing import Any, Callable, Optional, Protocol
+from typing import Any, Callable, Optional
 import threading
 import time
 
-__all__ = ["cache", "CacheWrapper", "Scheduler", "schedule", "only_one_running", "compress"]
+__all__ = [
+    "cache",
+    "CacheWrapper",
+    "Scheduler",
+    "schedule",
+    "only_one_running",
+    "compress",
+]
 
 
-class DecoratorType(Protocol):
-    def __call__(self, func: Callable) -> Callable: ...
-
-
-def compress(*decos: DecoratorType):
+def compress(*decos: Callable[[Callable], Callable]):
     def deco(func: Callable):
         f = func
         for deco in reversed(decos):
